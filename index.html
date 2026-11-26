@@ -1,218 +1,327 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>PARAGON | Official Hub</title>
-  <style>
-    :root {
-      --bg: #0b0c10;
-      --surface: #14161f;
-      --surface-hover: #1d202d;
-      --text: #ffffff;
-      --muted: #8b92a5;
-      --accent: #00f0ff;
-      --border: rgba(255, 255, 255, 0.08);
-    }
-    body.light-mode {
-      --bg: #f4f6fb;
-      --surface: #ffffff;
-      --surface-hover: #eef1f8;
-      --text: #11131a;
-      --muted: #5a6275;
-      --border: rgba(0, 0, 0, 0.08);
-    }
-    * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', system-ui, sans-serif; transition: background 0.25s, color 0.25s; }
-    body { background: var(--bg); color: var(--text); min-height: 100vh; display: flex; flex-direction: column; }
-    
-    /* Navbar */
-    header {
-      display: flex; justify-content: space-between; align-items: center;
-      padding: 16px 24px; background: var(--surface); border-bottom: 1px solid var(--border);
-      position: sticky; top: 0; z-index: 10;
-    }
-    .brand { font-weight: 800; font-size: 1.3rem; letter-spacing: 3px; color: var(--accent); }
-    .header-actions { display: flex; gap: 10px; align-items: center; }
-    .status-dot { width: 8px; height: 8px; background: #00ff88; border-radius: 50%; display: inline-block; margin-right: 6px; }
-    .icon-btn {
-      background: var(--bg); border: 1px solid var(--border); color: var(--text);
-      padding: 8px 12px; border-radius: 10px; cursor: pointer; font-size: 0.9rem;
-    }
-    .icon-btn:hover { border-color: var(--accent); }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Paragon</title>
+<meta name="theme-color" content="#0f0f12">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%238b7cf6'/%3E%3Cpath d='M11 24V8h6.5a4.5 4.5 0 0 1 0 9H11' fill='none' stroke='white' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0f0f12;--surface:#17171c;--surface2:#1f1f26;--border:#2a2a33;
+  --text:#f2f2f5;--muted:#9a9aa8;--accent:#8b7cf6;--accent-fg:#fff;
+  --radius:10px;--nav-h:64px;--side-w:232px;
+}
+:root[data-theme="light"]{
+  --bg:#f6f6f8;--surface:#ffffff;--surface2:#eeeef2;--border:#e0e0e7;
+  --text:#16161a;--muted:#6b6b78;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
+body{font-family:'Inter',system-ui,-apple-system,sans-serif;background:var(--bg);color:var(--text);font-size:15px;line-height:1.5;-webkit-font-smoothing:antialiased}
+button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
+svg.i{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;flex:none}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
 
-    /* Tabs */
-    nav {
-      display: flex; gap: 8px; padding: 12px 24px; overflow-x: auto;
-      background: var(--bg); border-bottom: 1px solid var(--border);
-    }
-    .tab-btn {
-      background: transparent; border: none; color: var(--muted);
-      padding: 8px 16px; border-radius: 20px; cursor: pointer; font-weight: 600; font-size: 0.9rem; white-space: nowrap;
-    }
-    .tab-btn.active { background: var(--accent); color: #000; }
+/* Splash */
+#splash{position:fixed;inset:0;z-index:100;background:#0f0f12;display:flex;align-items:center;justify-content:center;gap:12px;pointer-events:all;animation:splashOut .35s ease 1.2s forwards}
+#splash .mark{width:44px;height:44px;opacity:0;animation:fadeIn .6s ease .1s forwards}
+#splash .word{font-size:24px;font-weight:600;color:#f2f2f5;letter-spacing:-.01em;opacity:0;animation:fadeIn .6s ease .2s forwards}
+@keyframes fadeIn{to{opacity:1}}
+@keyframes splashOut{to{opacity:0;visibility:hidden}}
+.no-splash #splash{display:none}
 
-    /* Main Content */
-    main { flex: 1; padding: 24px; max-width: 800px; width: 100%; margin: 0 auto; }
-    .section { display: none; animation: fadeIn 0.3s ease; }
-    .section.active { display: block; }
-    @keyframes fadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
+/* Layout */
+.app{display:flex;min-height:100%}
+.sidebar{width:var(--side-w);background:var(--surface);border-right:1px solid var(--border);padding:20px 12px;position:fixed;top:0;bottom:0;left:0;display:flex;flex-direction:column;gap:24px}
+.brand{display:flex;align-items:center;gap:10px;padding:0 8px;font-weight:600;font-size:18px;letter-spacing:-.01em}
+.brand svg{width:30px;height:30px}
+.nav{display:flex;flex-direction:column;gap:2px}
+.nav button{display:flex;align-items:center;gap:12px;padding:10px 12px;border-radius:8px;color:var(--muted);font-weight:500;text-align:left;transition:background .15s,color .15s}
+.nav button:hover{background:var(--surface2);color:var(--text)}
+.nav button.active{background:var(--surface2);color:var(--text)}
+.nav button.active svg{color:var(--accent)}
+.nav .spacer{flex:1}
+main{flex:1;margin-left:var(--side-w);padding:36px 40px 48px;max-width:1100px;width:100%}
+.page{display:none}
+.page.active{display:block}
+h1{font-size:26px;font-weight:700;letter-spacing:-.02em;margin-bottom:4px}
+.sub{color:var(--muted);margin-bottom:28px}
+h2{font-size:15px;font-weight:600;margin:28px 0 12px}
 
-    .card {
-      background: var(--surface); border: 1px solid var(--border);
-      border-radius: 16px; padding: 20px; margin-bottom: 16px;
-    }
-    .card h2 { font-size: 1.2rem; margin-bottom: 8px; }
-    .card p { color: var(--muted); font-size: 0.95rem; line-height: 1.5; }
+/* Components */
+.btn{display:inline-flex;align-items:center;gap:8px;padding:9px 16px;border-radius:8px;font-weight:500;background:var(--surface2);border:1px solid var(--border);transition:background .15s}
+.btn:hover{background:var(--border)}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:var(--accent-fg)}
+.btn.primary:hover{filter:brightness(1.08);background:var(--accent)}
+.row{display:flex;gap:10px;flex-wrap:wrap}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.stat{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:16px 18px}
+.stat b{display:block;font-size:24px;font-weight:700;letter-spacing:-.02em}
+.stat span{color:var(--muted);font-size:13px}
+.empty{border:1px dashed var(--border);border-radius:var(--radius);padding:40px 20px;text-align:center;color:var(--muted)}
+.empty svg{width:28px;height:28px;margin-bottom:10px;color:var(--muted)}
+.empty p{max-width:340px;margin:0 auto 16px}
+.empty strong{display:block;color:var(--text);font-weight:600;margin-bottom:4px}
+.chips{display:flex;gap:8px;overflow-x:auto;margin-bottom:20px;padding-bottom:2px}
+.chip{padding:6px 14px;border-radius:999px;border:1px solid var(--border);color:var(--muted);font-size:13px;font-weight:500;white-space:nowrap}
+.chip.active{background:var(--text);color:var(--bg);border-color:var(--text)}
+.search{display:flex;align-items:center;gap:10px;background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:0 12px;margin-bottom:16px;color:var(--muted)}
+.search input{flex:1;background:none;border:0;color:var(--text);font:inherit;padding:10px 0;outline:0}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:14px}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:16px}
+.card h3{font-size:15px;font-weight:600;margin-bottom:6px}
+.badge{display:inline-block;font-size:12px;font-weight:500;padding:2px 9px;border-radius:999px;background:var(--surface2);color:var(--muted)}
+.badge.progress{color:var(--accent)}
+.badge.done{color:#4cb782}
+.card .foot{display:flex;justify-content:space-between;align-items:center;margin-top:14px}
+.card .del{color:var(--muted);font-size:13px}
+.card .del:hover{color:var(--text)}
 
-    /* Grid for Home */
-    .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 14px; margin-top: 16px; }
-    .stat-box { background: var(--bg); padding: 16px; border-radius: 12px; border: 1px solid var(--border); }
-    .stat-box span { font-size: 0.8rem; color: var(--muted); text-transform: uppercase; }
-    .stat-box h3 { font-size: 1.3rem; margin-top: 4px; color: var(--accent); }
+/* Settings */
+.group{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);margin-bottom:18px}
+.group h2{margin:0;padding:14px 18px;border-bottom:1px solid var(--border)}
+.setting{display:flex;justify-content:space-between;align-items:center;gap:16px;padding:14px 18px;border-bottom:1px solid var(--border)}
+.setting:last-child{border-bottom:0}
+.setting small{display:block;color:var(--muted);font-size:13px}
+.seg{display:flex;background:var(--surface2);border-radius:8px;padding:3px}
+.seg button{padding:6px 12px;border-radius:6px;font-size:13px;font-weight:500;color:var(--muted)}
+.seg button.active{background:var(--surface);color:var(--text);box-shadow:0 0 0 1px var(--border)}
+.swatches{display:flex;gap:10px}
+.swatch{width:26px;height:26px;border-radius:50%;border:2px solid transparent;outline:0}
+.swatch.active{box-shadow:0 0 0 2px var(--bg),0 0 0 4px var(--c)}
+.switch{width:40px;height:24px;border-radius:999px;background:var(--border);position:relative;transition:background .15s;flex:none}
+.switch::after{content:"";position:absolute;top:3px;left:3px;width:18px;height:18px;border-radius:50%;background:#fff;transition:transform .15s}
+.switch.on{background:var(--accent)}
+.switch.on::after{transform:translateX(16px)}
+input.field{background:var(--surface2);border:1px solid var(--border);color:var(--text);border-radius:8px;padding:8px 12px;font:inherit;width:200px;max-width:100%}
+.soon{font-size:12px;color:var(--muted)}
 
-    /* Music Player */
-    .track-item {
-      display: flex; justify-content: space-between; align-items: center;
-      padding: 12px; border-radius: 10px; background: var(--bg); margin-top: 10px; border: 1px solid var(--border);
-    }
-    .track-item:hover { border-color: var(--accent); }
-    .play-btn {
-      background: var(--accent); color: #000; border: none; padding: 8px 14px;
-      border-radius: 8px; font-weight: bold; cursor: pointer;
-    }
+/* Toast */
+#toast{position:fixed;left:50%;bottom:90px;transform:translate(-50%,20px);background:var(--text);color:var(--bg);padding:10px 16px;border-radius:8px;font-size:14px;font-weight:500;opacity:0;pointer-events:none;transition:all .2s;z-index:50}
+#toast.show{opacity:1;transform:translate(-50%,0)}
 
-    /* Settings Modal */
-    .modal-overlay {
-      display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.7);
-      align-items: center; justify-content: center; z-index: 50; padding: 20px;
-    }
-    .modal-overlay.open { display: flex; }
-    .modal {
-      background: var(--surface); border: 1px solid var(--border);
-      border-radius: 18px; padding: 24px; width: 100%; max-width: 380px;
-    }
-    .setting-row { display: flex; justify-content: space-between; align-items: center; margin: 18px 0; }
-    .color-dots { display: flex; gap: 10px; }
-    .dot { width: 26px; height: 26px; border-radius: 50%; cursor: pointer; border: 2px solid transparent; }
-    .dot.selected { border-color: var(--text); transform: scale(1.1); }
-  </style>
+/* Mobile */
+@media (max-width:820px){
+  .sidebar{top:auto;width:100%;height:calc(var(--nav-h) + env(safe-area-inset-bottom,0px));flex-direction:row;padding:0 6px env(safe-area-inset-bottom,0px);border-right:0;border-top:1px solid var(--border);z-index:20;gap:0}
+  .brand,.nav .spacer{display:none}
+  .nav{flex-direction:row;width:100%;justify-content:space-around;gap:0}
+  .nav button{flex-direction:column;gap:3px;font-size:11px;padding:8px 10px;flex:1;align-items:center;justify-content:center;background:none!important}
+  .nav button.active{color:var(--accent)}
+  main{margin-left:0;padding:calc(20px + env(safe-area-inset-top,0px)) 18px calc(var(--nav-h) + 32px);}
+  .topbrand{display:flex!important}
+  .stats{grid-template-columns:1fr}
+  h1{font-size:23px}
+  .setting{flex-wrap:wrap}
+  #toast{bottom:calc(var(--nav-h) + 20px)}
+}
+.topbrand{display:none;align-items:center;gap:10px;font-weight:600;font-size:17px;margin-bottom:22px}
+.topbrand svg{width:26px;height:26px}
+@media (prefers-reduced-motion:reduce){*{animation-duration:.01ms!important;transition:none!important}#splash{animation:splashOut .01ms 1.2s forwards}}
+</style>
 </head>
 <body>
 
-  <header>
-    <div class="brand">PARAGON</div>
-    <div class="header-actions">
-      <span style="font-size: 0.8rem; color: var(--muted);"><i class="status-dot"></i>Online</span>
-      <button class="icon-btn" onclick="toggleSettings()">⚙️ Settings</button>
-    </div>
-  </header>
+<div id="splash" aria-hidden="true">
+  <svg class="mark" viewBox="0 0 32 32"><rect width="32" height="32" rx="8" fill="#8b7cf6"/><path d="M11 24V8h6.5a4.5 4.5 0 0 1 0 9H11" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+  <span class="word">Paragon</span>
+</div>
 
-  <nav>
-    <button class="tab-btn active" onclick="switchTab('home', this)">🏠 Home</button>
-    <button class="tab-btn" onclick="switchTab('music', this)">🎵 Music Studio</button>
-    <button class="tab-btn" onclick="switchTab('vault', this)">📁 Projects & Vault</button>
-    <button class="tab-btn" onclick="switchTab('about', this)">⚡ About</button>
-  </nav>
+<svg width="0" height="0" style="position:absolute">
+  <defs>
+    <symbol id="logo" viewBox="0 0 32 32"><rect width="32" height="32" rx="8" style="fill:var(--accent)"/><path d="M11 24V8h6.5a4.5 4.5 0 0 1 0 9H11" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+    <symbol id="i-home" viewBox="0 0 24 24"><path d="M3 11l9-8 9 8v9a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/></symbol>
+    <symbol id="i-lib" viewBox="0 0 24 24"><path d="M4 4v16M9 4v16M14 6l5 14M14 6l3-1.5"/></symbol>
+    <symbol id="i-proj" viewBox="0 0 24 24"><path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></symbol>
+    <symbol id="i-set" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></symbol>
+    <symbol id="i-up" viewBox="0 0 24 24"><path d="M12 16V4M7 9l5-5 5 5M4 20h16"/></symbol>
+    <symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
+    <symbol id="i-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></symbol>
+    <symbol id="i-music" viewBox="0 0 24 24"><path d="M9 18V5l11-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="17" cy="16" r="3"/></symbol>
+  </defs>
+</svg>
+
+<div class="app">
+  <aside class="sidebar">
+    <div class="brand"><svg><use href="#logo"/></svg>Paragon</div>
+    <nav class="nav" id="nav">
+      <button data-page="home" class="active"><svg class="i"><use href="#i-home"/></svg>Home</button>
+      <button data-page="library"><svg class="i"><use href="#i-lib"/></svg>Library</button>
+      <button data-page="projects"><svg class="i"><use href="#i-proj"/></svg>Projects</button>
+      <span class="spacer"></span>
+      <button data-page="settings"><svg class="i"><use href="#i-set"/></svg>Settings</button>
+    </nav>
+  </aside>
 
   <main>
-    <!-- HOME TAB -->
-    <div id="home" class="section active">
-      <div class="card">
-        <h2>Welcome to PARAGON</h2>
-        <p>Your central hub for original music, creative builds, and digital experiments. Use the tabs above to explore or customize your view in Settings.</p>
-        <div class="grid">
-          <div class="stat-box"><span>Studio Status</span><h3>Active</h3></div>
-          <div class="stat-box"><span>Uploaded Tracks</span><h3 id="trackCount">0 Tracks</h3></div>
-          <div class="stat-box"><span>Version</span><h3>v1.0 Hub</h3></div>
-        </div>
-      </div>
-    </div>
+    <div class="topbrand"><svg><use href="#logo"/></svg>Paragon</div>
 
-    <!-- MUSIC TAB -->
-    <div id="music" class="section">
-      <div class="card">
-        <h2>🎵 Music Studio</h2>
-        <p>Original tracks and beats produced at Paragon Studio.</p>
-        
-        <div class="track-item">
-          <div>
-            <strong>Track 01 — Demo Slot</strong><br>
-            <small style="color: var(--muted);">Ready for your first MP3 upload</small>
-          </div>
-          <button class="play-btn" onclick="alert('Upload your MP3 file to GitHub first, then we will link it here!')">▶ Play</button>
-        </div>
+    <section class="page active" id="page-home">
+      <h1 id="greet">Welcome</h1>
+      <p class="sub">Your music, projects and files in one place.</p>
+      <div class="row" style="margin-bottom:24px">
+        <button class="btn primary" data-soon="Upload arrives in a later update"><svg class="i"><use href="#i-up"/></svg>Upload</button>
+        <button class="btn" id="homeNew"><svg class="i"><use href="#i-plus"/></svg>New project</button>
       </div>
-    </div>
+      <div class="stats">
+        <div class="stat"><b>0</b><span>Library items</span></div>
+        <div class="stat"><b id="statProj">0</b><span>Projects</span></div>
+        <div class="stat"><b>0</b><span>Plays</span></div>
+      </div>
+      <h2>Recent activity</h2>
+      <div class="empty"><svg class="i"><use href="#i-music"/></svg><strong>Nothing here yet</strong><p>Items you add will show up here.</p></div>
+    </section>
 
-    <!-- VAULT TAB -->
-    <div id="vault" class="section">
-      <div class="card">
-        <h2>📁 Projects & Universal Vault</h2>
-        <p>Space reserved for apps, files, links, and future releases.</p>
-        <div class="stat-box" style="margin-top: 12px;">
-          <span>Slot 01</span>
-          <h3 style="font-size: 1rem; color: var(--text);">Empty Slot — Ready for deployment</h3>
-        </div>
+    <section class="page" id="page-library">
+      <h1>Library</h1>
+      <p class="sub">Music, videos, files and notes.</p>
+      <div class="search"><svg class="i"><use href="#i-search"/></svg><input type="search" placeholder="Search your library" aria-label="Search library"></div>
+      <div class="chips" id="chips">
+        <button class="chip active">All</button><button class="chip">Music</button><button class="chip">Videos</button><button class="chip">Files</button><button class="chip">Notes</button>
       </div>
-    </div>
+      <div class="empty"><svg class="i"><use href="#i-lib"/></svg><strong>Your library is empty</strong><p>Upload your first track, video or file to see it here.</p><button class="btn primary" data-soon="Upload arrives in a later update"><svg class="i"><use href="#i-up"/></svg>Upload</button></div>
+    </section>
 
-    <!-- ABOUT TAB -->
-    <div id="about" class="section">
-      <div class="card">
-        <h2>⚡ About PARAGON</h2>
-        <p>Built from scratch as an independent digital space for music, technology, and creative freedom.</p>
+    <section class="page" id="page-projects">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:12px;flex-wrap:wrap">
+        <div><h1>Projects</h1><p class="sub">Track what you are building.</p></div>
+        <button class="btn primary" id="newProj"><svg class="i"><use href="#i-plus"/></svg>New project</button>
       </div>
-    </div>
+      <div id="projList"></div>
+    </section>
+
+    <section class="page" id="page-settings">
+      <h1>Settings</h1>
+      <p class="sub">Changes save automatically on this device.</p>
+
+      <div class="group">
+        <h2>Appearance</h2>
+        <div class="setting"><div>Theme</div>
+          <div class="seg" id="themeSeg"><button data-v="dark">Dark</button><button data-v="light">Light</button><button data-v="system">System</button></div></div>
+        <div class="setting"><div>Accent color</div><div class="swatches" id="swatches"></div></div>
+        <div class="setting"><div>Layout<small>Spacing of lists and cards</small></div>
+          <div class="seg" id="densSeg"><button data-v="comfortable">Comfortable</button><button data-v="compact">Compact</button></div></div>
+      </div>
+
+      <div class="group">
+        <h2>Profile</h2>
+        <div class="setting"><div>Display name</div><input class="field" id="nameField" placeholder="Your name" maxlength="30"></div>
+      </div>
+
+      <div class="group">
+        <h2>Playback</h2>
+        <div class="setting"><div>Autoplay next track<small>Available with the music player</small></div><button class="switch" data-soon="Playback options arrive with the player" aria-label="Autoplay"></button></div>
+        <div class="setting"><div>Default volume<small>Available with the music player</small></div><span class="soon">Coming soon</span></div>
+      </div>
+
+      <div class="group">
+        <h2>Data</h2>
+        <div class="setting"><div>Reset settings<small>Restore theme, accent and layout</small></div><button class="btn" id="resetBtn">Reset</button></div>
+      </div>
+
+      <div class="group">
+        <h2>About</h2>
+        <div class="setting"><div>Version</div><span class="soon">2.0</span></div>
+      </div>
+    </section>
   </main>
+</div>
 
-  <!-- SETTINGS MODAL -->
-  <div class="modal-overlay" id="settingsModal">
-    <div class="modal">
-      <div style="display:flex; justify-content:space-between; align-items:center;">
-        <h3>⚙️ Appearance & Settings</h3>
-        <button class="icon-btn" onclick="toggleSettings()">✕</button>
-      </div>
-      
-      <div class="setting-row">
-        <span>Theme Mode</span>
-        <button class="icon-btn" id="modeBtn" onclick="toggleTheme()">🌙 Dark Mode</button>
-      </div>
+<div id="toast" role="status"></div>
 
-      <div class="setting-row">
-        <span>Accent Color</span>
-        <div class="color-dots">
-          <div class="dot selected" style="background:#00f0ff;" onclick="setAccent('#00f0ff', this)"></div>
-          <div class="dot" style="background:#ff007f;" onclick="setAccent('#ff007f', this)"></div>
-          <div class="dot" style="background:#00ff88;" onclick="setAccent('#00ff88', this)"></div>
-          <div class="dot" style="background:#ffb700;" onclick="setAccent('#ffb700', this)"></div>
-        </div>
-      </div>
-    </div>
-  </div>
+<script>
+(function(){
+  // Splash: once per session, not skippable
+  try{ if(sessionStorage.getItem('pg_splash')) document.documentElement.classList.add('no-splash'); else sessionStorage.setItem('pg_splash','1'); }catch(e){}
+  var splash=document.getElementById('splash');
+  setTimeout(function(){ if(splash) splash.style.display='none'; },1700);
 
-  <script>
-    function switchTab(tabId, btn) {
-      document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
-      document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-      document.getElementById(tabId).classList.add('active');
-      btn.classList.add('active');
+  var ACCENTS=[['Violet','#8b7cf6'],['Blue','#5b8def'],['Teal','#3dae9f'],['Orange','#e0894b'],['Rose','#d9627f']];
+  var DEF={theme:'dark',accent:'#8b7cf6',density:'comfortable',name:''};
+  var S=Object.assign({},DEF);
+  function load(){ try{ var r=localStorage.getItem('pg_settings'); if(r) S=Object.assign({},DEF,JSON.parse(r)); }catch(e){} }
+  function save(){ try{ localStorage.setItem('pg_settings',JSON.stringify(S)); }catch(e){} }
+  var $=function(s,r){return (r||document).querySelector(s)};
+  var $$=function(s,r){return Array.prototype.slice.call((r||document).querySelectorAll(s))};
+
+  var toastT;
+  function toast(m){ var t=$('#toast'); t.textContent=m; t.classList.add('show'); clearTimeout(toastT); toastT=setTimeout(function(){t.classList.remove('show')},2200); }
+
+  function applyTheme(){
+    var t=S.theme; if(t==='system') t=matchMedia('(prefers-color-scheme: light)').matches?'light':'dark';
+    document.documentElement.setAttribute('data-theme',t);
+    document.documentElement.style.setProperty('--accent',S.accent);
+    var meta=$('meta[name="theme-color"]'); if(meta) meta.content=t==='light'?'#f6f6f8':'#0f0f12';
+    document.documentElement.style.setProperty('--radius',S.density==='compact'?'8px':'10px');
+    document.body.style.fontSize=S.density==='compact'?'14px':'15px';
+  }
+  function renderSettings(){
+    $$('#themeSeg button').forEach(function(b){b.classList.toggle('active',b.dataset.v===S.theme)});
+    $$('#densSeg button').forEach(function(b){b.classList.toggle('active',b.dataset.v===S.density)});
+    $$('#swatches .swatch').forEach(function(b){b.classList.toggle('active',b.dataset.c===S.accent)});
+    $('#nameField').value=S.name;
+    greet();
+  }
+  function greet(){
+    var h=new Date().getHours(), g=h<12?'Good morning':h<18?'Good afternoon':'Good evening';
+    $('#greet').textContent=S.name?g+', '+S.name:g;
+  }
+
+  // Swatches
+  ACCENTS.forEach(function(a){
+    var b=document.createElement('button'); b.className='swatch'; b.title=a[0]; b.setAttribute('aria-label',a[0]);
+    b.style.background=a[1]; b.style.setProperty('--c',a[1]); b.dataset.c=a[1];
+    b.onclick=function(){S.accent=a[1];save();applyTheme();renderSettings()};
+    $('#swatches').appendChild(b);
+  });
+  $$('#themeSeg button').forEach(function(b){b.onclick=function(){S.theme=b.dataset.v;save();applyTheme();renderSettings()}});
+  $$('#densSeg button').forEach(function(b){b.onclick=function(){S.density=b.dataset.v;save();applyTheme();renderSettings()}});
+  $('#nameField').addEventListener('input',function(e){S.name=e.target.value.trim();save();greet()});
+  $('#resetBtn').onclick=function(){S=Object.assign({},DEF);save();applyTheme();renderSettings();toast('Settings reset')};
+  matchMedia('(prefers-color-scheme: light)').addEventListener&&matchMedia('(prefers-color-scheme: light)').addEventListener('change',function(){if(S.theme==='system')applyTheme()});
+
+  // Navigation
+  function go(p){
+    $$('.page').forEach(function(s){s.classList.toggle('active',s.id==='page-'+p)});
+    $$('#nav button').forEach(function(b){b.classList.toggle('active',b.dataset.page===p)});
+    window.scrollTo(0,0);
+    try{history.replaceState(null,'','#'+p)}catch(e){}
+  }
+  $$('#nav button').forEach(function(b){b.onclick=function(){go(b.dataset.page)}});
+  $$('[data-soon]').forEach(function(b){b.onclick=function(){toast(b.dataset.soon)}});
+  $$('#chips .chip').forEach(function(c){c.onclick=function(){$$('#chips .chip').forEach(function(x){x.classList.remove('active')});c.classList.add('active')}});
+
+  // Projects (saved on this device)
+  var P=[];
+  function loadP(){ try{P=JSON.parse(localStorage.getItem('pg_projects')||'[]')}catch(e){P=[]} }
+  function saveP(){ try{localStorage.setItem('pg_projects',JSON.stringify(P))}catch(e){} }
+  var NEXT={idea:'progress',progress:'done',done:'idea'}, LABEL={idea:'Idea',progress:'In progress',done:'Done'};
+  function esc(s){return s.replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]})}
+  function renderP(){
+    $('#statProj').textContent=P.length;
+    var el=$('#projList');
+    if(!P.length){
+      el.innerHTML='<div class="empty"><svg class="i"><use href="#i-proj"/></svg><strong>No projects yet</strong><p>Create a project to track its status.</p><button class="btn primary" id="emptyNew"><svg class="i"><use href="#i-plus"/></svg>New project</button></div>';
+      $('#emptyNew').onclick=newProject; return;
     }
+    el.innerHTML='<div class="grid">'+P.map(function(p,i){
+      return '<div class="card"><h3>'+esc(p.title)+'</h3><div class="foot"><button class="badge '+p.status+'" data-s="'+i+'" title="Tap to change status">'+LABEL[p.status]+'</button><button class="del" data-d="'+i+'">Delete</button></div></div>';
+    }).join('')+'</div>';
+    $$('[data-s]',el).forEach(function(b){b.onclick=function(){var p=P[b.dataset.s];p.status=NEXT[p.status];saveP();renderP()}});
+    $$('[data-d]',el).forEach(function(b){b.onclick=function(){P.splice(b.dataset.d,1);saveP();renderP();toast('Project deleted')}});
+  }
+  function newProject(){
+    var t=prompt('Project name'); if(!t||!t.trim()) return;
+    P.unshift({title:t.trim().slice(0,60),status:'idea'}); saveP(); renderP(); go('projects'); toast('Project created');
+  }
+  $('#newProj').onclick=newProject; $('#homeNew').onclick=newProject;
 
-    function toggleSettings() {
-      document.getElementById('settingsModal').classList.toggle('open');
-    }
-
-    function toggleTheme() {
-      document.body.classList.toggle('light-mode');
-      const isLight = document.body.classList.contains('light-mode');
-      document.getElementById('modeBtn').innerText = isLight ? '☀️ Light Mode' : '🌙 Dark Mode';
-    }
-
-    function setAccent(color, el) {
-      document.documentElement.style.setProperty('--accent', color);
-      document.querySelectorAll('.dot').forEach(d => d.classList.remove('selected'));
-      el.classList.add('selected');
-    }
-  </script>
+  load(); loadP(); applyTheme(); renderSettings(); renderP();
+  var h=location.hash.slice(1); if(['home','library','projects','settings'].indexOf(h)>-1) go(h);
+})();
+</script>
 </body>
 </html>
