@@ -5,64 +5,214 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>PARAGON | Official Hub</title>
   <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', sans-serif; }
-    body {
-      background: radial-gradient(circle at top, #1a1a2e, #0f0f1a);
-      color: #ffffff;
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      text-align: center;
-      padding: 20px;
+    :root {
+      --bg: #0b0c10;
+      --surface: #14161f;
+      --surface-hover: #1d202d;
+      --text: #ffffff;
+      --muted: #8b92a5;
+      --accent: #00f0ff;
+      --border: rgba(255, 255, 255, 0.08);
     }
-    .badge {
-      background: rgba(0, 240, 255, 0.1);
-      color: #00f0ff;
-      border: 1px solid #00f0ff;
-      padding: 6px 16px;
-      border-radius: 20px;
-      font-size: 12px;
-      letter-spacing: 2px;
-      margin-bottom: 20px;
-      text-transform: uppercase;
+    body.light-mode {
+      --bg: #f4f6fb;
+      --surface: #ffffff;
+      --surface-hover: #eef1f8;
+      --text: #11131a;
+      --muted: #5a6275;
+      --border: rgba(0, 0, 0, 0.08);
     }
-    h1 {
-      font-size: 3.2rem;
-      letter-spacing: 6px;
-      background: linear-gradient(90deg, #00f0ff, #ff007f);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      margin-bottom: 12px;
+    * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', system-ui, sans-serif; transition: background 0.25s, color 0.25s; }
+    body { background: var(--bg); color: var(--text); min-height: 100vh; display: flex; flex-direction: column; }
+    
+    /* Navbar */
+    header {
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 16px 24px; background: var(--surface); border-bottom: 1px solid var(--border);
+      position: sticky; top: 0; z-index: 10;
     }
-    p {
-      color: #a0a0b8;
-      max-width: 450px;
-      line-height: 1.6;
-      margin-bottom: 30px;
-      font-size: 1rem;
+    .brand { font-weight: 800; font-size: 1.3rem; letter-spacing: 3px; color: var(--accent); }
+    .header-actions { display: flex; gap: 10px; align-items: center; }
+    .status-dot { width: 8px; height: 8px; background: #00ff88; border-radius: 50%; display: inline-block; margin-right: 6px; }
+    .icon-btn {
+      background: var(--bg); border: 1px solid var(--border); color: var(--text);
+      padding: 8px 12px; border-radius: 10px; cursor: pointer; font-size: 0.9rem;
     }
+    .icon-btn:hover { border-color: var(--accent); }
+
+    /* Tabs */
+    nav {
+      display: flex; gap: 8px; padding: 12px 24px; overflow-x: auto;
+      background: var(--bg); border-bottom: 1px solid var(--border);
+    }
+    .tab-btn {
+      background: transparent; border: none; color: var(--muted);
+      padding: 8px 16px; border-radius: 20px; cursor: pointer; font-weight: 600; font-size: 0.9rem; white-space: nowrap;
+    }
+    .tab-btn.active { background: var(--accent); color: #000; }
+
+    /* Main Content */
+    main { flex: 1; padding: 24px; max-width: 800px; width: 100%; margin: 0 auto; }
+    .section { display: none; animation: fadeIn 0.3s ease; }
+    .section.active { display: block; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
+
     .card {
-      background: rgba(255, 255, 255, 0.05);
-      border: 1px solid rgba(255, 255, 255, 0.1);
-      border-radius: 16px;
-      padding: 25px;
-      width: 100%;
-      max-width: 400px;
-      backdrop-filter: blur(10px);
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: 16px; padding: 20px; margin-bottom: 16px;
     }
-    .card h3 { margin-bottom: 8px; color: #fff; }
-    .card span { font-size: 13px; color: #00f0ff; }
+    .card h2 { font-size: 1.2rem; margin-bottom: 8px; }
+    .card p { color: var(--muted); font-size: 0.95rem; line-height: 1.5; }
+
+    /* Grid for Home */
+    .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 14px; margin-top: 16px; }
+    .stat-box { background: var(--bg); padding: 16px; border-radius: 12px; border: 1px solid var(--border); }
+    .stat-box span { font-size: 0.8rem; color: var(--muted); text-transform: uppercase; }
+    .stat-box h3 { font-size: 1.3rem; margin-top: 4px; color: var(--accent); }
+
+    /* Music Player */
+    .track-item {
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 12px; border-radius: 10px; background: var(--bg); margin-top: 10px; border: 1px solid var(--border);
+    }
+    .track-item:hover { border-color: var(--accent); }
+    .play-btn {
+      background: var(--accent); color: #000; border: none; padding: 8px 14px;
+      border-radius: 8px; font-weight: bold; cursor: pointer;
+    }
+
+    /* Settings Modal */
+    .modal-overlay {
+      display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.7);
+      align-items: center; justify-content: center; z-index: 50; padding: 20px;
+    }
+    .modal-overlay.open { display: flex; }
+    .modal {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: 18px; padding: 24px; width: 100%; max-width: 380px;
+    }
+    .setting-row { display: flex; justify-content: space-between; align-items: center; margin: 18px 0; }
+    .color-dots { display: flex; gap: 10px; }
+    .dot { width: 26px; height: 26px; border-radius: 50%; cursor: pointer; border: 2px solid transparent; }
+    .dot.selected { border-color: var(--text); transform: scale(1.1); }
   </style>
 </head>
 <body>
-  <div class="badge">● Server Online</div>
-  <h1>PARAGON</h1>
-  <p>Welcome to my official digital universe. Original AI music, creative projects, and more coming soon.</p>
-  <div class="card">
-    <h3>🎵 Music Studio</h3>
-    <span>Suno AI Tracks Launching Soon...</span>
+
+  <header>
+    <div class="brand">PARAGON</div>
+    <div class="header-actions">
+      <span style="font-size: 0.8rem; color: var(--muted);"><i class="status-dot"></i>Online</span>
+      <button class="icon-btn" onclick="toggleSettings()">⚙️ Settings</button>
+    </div>
+  </header>
+
+  <nav>
+    <button class="tab-btn active" onclick="switchTab('home', this)">🏠 Home</button>
+    <button class="tab-btn" onclick="switchTab('music', this)">🎵 Music Studio</button>
+    <button class="tab-btn" onclick="switchTab('vault', this)">📁 Projects & Vault</button>
+    <button class="tab-btn" onclick="switchTab('about', this)">⚡ About</button>
+  </nav>
+
+  <main>
+    <!-- HOME TAB -->
+    <div id="home" class="section active">
+      <div class="card">
+        <h2>Welcome to PARAGON</h2>
+        <p>Your central hub for original music, creative builds, and digital experiments. Use the tabs above to explore or customize your view in Settings.</p>
+        <div class="grid">
+          <div class="stat-box"><span>Studio Status</span><h3>Active</h3></div>
+          <div class="stat-box"><span>Uploaded Tracks</span><h3 id="trackCount">0 Tracks</h3></div>
+          <div class="stat-box"><span>Version</span><h3>v1.0 Hub</h3></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- MUSIC TAB -->
+    <div id="music" class="section">
+      <div class="card">
+        <h2>🎵 Music Studio</h2>
+        <p>Original tracks and beats produced at Paragon Studio.</p>
+        
+        <div class="track-item">
+          <div>
+            <strong>Track 01 — Demo Slot</strong><br>
+            <small style="color: var(--muted);">Ready for your first MP3 upload</small>
+          </div>
+          <button class="play-btn" onclick="alert('Upload your MP3 file to GitHub first, then we will link it here!')">▶ Play</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- VAULT TAB -->
+    <div id="vault" class="section">
+      <div class="card">
+        <h2>📁 Projects & Universal Vault</h2>
+        <p>Space reserved for apps, files, links, and future releases.</p>
+        <div class="stat-box" style="margin-top: 12px;">
+          <span>Slot 01</span>
+          <h3 style="font-size: 1rem; color: var(--text);">Empty Slot — Ready for deployment</h3>
+        </div>
+      </div>
+    </div>
+
+    <!-- ABOUT TAB -->
+    <div id="about" class="section">
+      <div class="card">
+        <h2>⚡ About PARAGON</h2>
+        <p>Built from scratch as an independent digital space for music, technology, and creative freedom.</p>
+      </div>
+    </div>
+  </main>
+
+  <!-- SETTINGS MODAL -->
+  <div class="modal-overlay" id="settingsModal">
+    <div class="modal">
+      <div style="display:flex; justify-content:space-between; align-items:center;">
+        <h3>⚙️ Appearance & Settings</h3>
+        <button class="icon-btn" onclick="toggleSettings()">✕</button>
+      </div>
+      
+      <div class="setting-row">
+        <span>Theme Mode</span>
+        <button class="icon-btn" id="modeBtn" onclick="toggleTheme()">🌙 Dark Mode</button>
+      </div>
+
+      <div class="setting-row">
+        <span>Accent Color</span>
+        <div class="color-dots">
+          <div class="dot selected" style="background:#00f0ff;" onclick="setAccent('#00f0ff', this)"></div>
+          <div class="dot" style="background:#ff007f;" onclick="setAccent('#ff007f', this)"></div>
+          <div class="dot" style="background:#00ff88;" onclick="setAccent('#00ff88', this)"></div>
+          <div class="dot" style="background:#ffb700;" onclick="setAccent('#ffb700', this)"></div>
+        </div>
+      </div>
+    </div>
   </div>
+
+  <script>
+    function switchTab(tabId, btn) {
+      document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+      document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+      document.getElementById(tabId).classList.add('active');
+      btn.classList.add('active');
+    }
+
+    function toggleSettings() {
+      document.getElementById('settingsModal').classList.toggle('open');
+    }
+
+    function toggleTheme() {
+      document.body.classList.toggle('light-mode');
+      const isLight = document.body.classList.contains('light-mode');
+      document.getElementById('modeBtn').innerText = isLight ? '☀️ Light Mode' : '🌙 Dark Mode';
+    }
+
+    function setAccent(color, el) {
+      document.documentElement.style.setProperty('--accent', color);
+      document.querySelectorAll('.dot').forEach(d => d.classList.remove('selected'));
+      el.classList.add('selected');
+    }
+  </script>
 </body>
 </html>
